@@ -21,9 +21,9 @@ winget install JanDeDobbeleer.OhMyPosh -s winget --silent
 ```
 🛠️ Script de configuración automática
 
-Hemos preparado un script Complete-Setup.ps1 que:
+He preparado un script setup.ps1 que:
 
-Borra el perfil clásico de PowerShell v5 (WindowsPowerShell).
+Borra el perfil clásico de PowerShell v5 (WindowsPowerShell), en caso de conflicto y lo deja con el perfil de Windows por defecto.
 
 Instala/actualiza PSReadLine, posh-git y Oh-My-Posh (ejecutable).
 
@@ -159,4 +159,4 @@ Windows Terminal no carga el esquema: revisa que tu settings.json esté en:
 
 o %LOCALAPPDATA%\Microsoft\Windows Terminal\settings.json
 ```
-¡Y eso es todo! Con estos pasos tendrás un terminal en Windows que rivaliza con cualquier configuración de Arch+Oh-My-Zsh.
+¡Y eso es todo! Con estos pasos tendrás un terminal en Windows que rivaliza con cualquier configuración de Oh-My-Zsh en Powershell.
