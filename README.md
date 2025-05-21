@@ -1,137 +1,161 @@
 Configuración de PowerShell al estilo Zsh+Oh-My-Zsh
 
-Este README explica cómo transformar tu PowerShell 7 en Windows Terminal para que luzca y se comporte como Zsh con Oh-My-Zsh: colores de sintaxis, Git integrado, autosuggestions y rutas subrayadas.
+Este README explica cómo transformar tu Powershell 7 en Windows Terminal para que luzca y se comporte como Zsh con Oh-My-Zsh: sintaxis coloreada, Git integrado, autosuggestions y rutas subrayadas.
 
 📦 Prerrequisitos
 
-PowerShell 7: Descárgalo desde la Microsoft Store o desde el repositorio oficial en GitHub.
+PowerShell 7: Descárgalo desde la Microsoft Store o desde GitHub.
 
-Windows Terminal: Instálalo también desde la Microsoft Store para gestionar pestañas, fondos translúcidos y personalizar fuentes y colores.
+Windows Terminal: Instálalo desde la Microsoft Store (o via winget) para pestañas, fondos translúcidos y personalización avanzada.
 
 🔧 Instalación de módulos
 
-Abre PowerShell 7 y ejecuta:
-```
-Install-Module PSReadLine -Scope CurrentUser -Force      # Sintaxis y autosuggestions
-Install-Module posh-git -Scope CurrentUser -Force      # Indicadores de Git en el prompt
-Install-Module oh-my-posh -Scope CurrentUser -Force      # Temas de prompt muy configurables
-```
-🛠️ Configuración del perfil ($PROFILE)
+Abre PowerShell 7 (pwsh) y ejecuta:
 
-Añade al final de tu perfil (notepad $PROFILE o code $PROFILE) el siguiente bloque:
-```
-### BEGIN Terminal Setup: PSReadLine + posh-git + oh-my-posh ###
-Import-Module PSReadLine
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle InlineView
-Set-PSReadLineOption -Colors @{
-  String           = 'DarkRed'
-  Comment          = 'DarkGreen'
-  Keyword          = 'Cyan'
-  Command          = 'Green'
-  Parameter        = 'Yellow'
-  Operator         = 'White'
-  Variable         = 'Magenta'
-  InlinePrediction = 'Gray'
-}
+Install-Module PSReadLine -Scope CurrentUser -Force # Resaltado + autosuggestions
+Install-Module posh-git -Scope CurrentUser -Force # Estado Git en el prompt
 
-Import-Module posh-git
-Import-Module oh-my-posh
-# Aplica nuestro tema personalizado
-Set-PoshPrompt -Theme custom-terminal
-### END Terminal Setup ###
-```
-Guarda el archivo y recarga tu perfil con:
-```
-. $PROFILE
-```
-🎨 Creación de un tema personalizado
+# oh-my-posh ahora se instala como ejecutable
 
-Carpeta de temas de usuario:
+winget install JanDeDobbeleer.OhMyPosh -s winget --silent
+
+🛠️ Script de configuración automática
+
+Hemos preparado un script Complete-Setup.ps1 que:
+
+Borra el perfil clásico de PowerShell v5 (WindowsPowerShell).
+
+Instala/actualiza PSReadLine, posh-git y Oh-My-Posh (ejecutable).
+
+Descarga y genera un tema custom-terminal.omp.json con rutas subrayadas.
+
+Sobrescribe tu perfil de PowerShell 7 (Documents\PowerShell\Microsoft.PowerShell_profile.ps1) para cargar solo PSReadLine, posh-git y Oh-My-Posh con powerlevel10k_classic.
+
+Configura Windows Terminal: fuente Cascadia Code PL con ligaduras, padding 8,8,8,8, esquema de color Gruvbox Dark y establece pwsh como predeterminado.
+
+Uso
+
+Descarga o clona tu repositorio con Complete-Setup.ps1.
+
+En pwsh (no en PS v5), ejecuta:
+
+.\setup.ps1
+
+Cierra todas las ventanas de pwsh y Windows Terminal y vuelve a abrir.
+
+🎨 Temas alternativos, configuración manual y ajustes
+
+PSReadLine: colores intensos (DarkRed, DarkGreen, Cyan, Green, Yellow, White, Magenta, Gray)
+
+Oh-My-Posh: tema powerlevel10k_classic con sección de ruta subrayada en blanco sobre fondo oscuro
+
+Windows Terminal:
+
+Fuente: Cascadia Code PL
+
+Ligaduras: ON
+
+Padding: 8px en cada lado
+
+Color scheme: Gruvbox Dark
+
+Shell por defecto: PowerShell 7 (pwsh)
+.\setup.ps1
+
+PSReadLine: colores suaves (Gray, DarkGray, Blue…)
+
+Oh-My-Posh: tema spaceship modificado para subrayar rutas en cyan y usar » como separador
+
+Windows Terminal:
+
+Fuente: Fira Code Retina (asegúrate de instalarla)
+
+Ligaduras: ON
+
+Padding: 10px en cada lado
+
+Color scheme: OneHalfDark
+.\setup_alt.ps1
+
+PSReadLine: colores suaves (DarkYellow, DarkGray, Cyan, Green, Blue, White, Magenta, DarkGray)
+
+Oh-My-Posh: tema Solarized Dark Custom con icono  en el path, separador › y rutas subrayadas en LightYellow
+
+Windows Terminal:
+
+Fuente: Cascadia Code PL
+
+Ligaduras: ON
+
+Padding: 8px en cada lado
+
+Color scheme: Solarized Dark
+
+Shell por defecto: PowerShell 7 (pwsh)
+.\setup_solar.ps1
+
+Para cambiar de tema basta con ejecutar cualquier script de nuevo
+
+Si prefieres hacerlo paso a paso:
+
+Crear carpeta de temas:
 
 $themeDir = "$HOME\Documents\PowerShell\Themes"
-if(-not (Test-Path $themeDir)) { New-Item -ItemType Directory -Path $themeDir }
+if(-not (Test-Path $themeDir)) { New-Item -Path $themeDir -ItemType Directory }
 
-Copia y modifica el tema base (Paradox) de Oh-My-Posh:
-```
-$base = (Get-Module -ListAvailable oh-my-posh)[0].ModuleBase + '\themes\paradox.omp.json'
-$dest = "$themeDir\custom-terminal.omp.json"
-$json = Get-Content $base -Raw | ConvertFrom-Json
-foreach($seg in $json) {
-  if($seg.type -eq 'path') {
-    $seg.style = 'Underline;Foreground=DarkCyan'
+Descargar y personalizar paradox.omp.json:
+
+Invoke-WebRequest \
+ -Uri 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/paradox.omp.json' \
+ -OutFile "$themeDir\paradox.omp.json" -UseBasicParsing
+$j = Get-Content "$themeDir\paradox.omp.json" -Raw | ConvertFrom-Json
+$j | ForEach-Object {
+if($_.type -eq 'path') {
+    $_.style = 'Background=DarkSlateGray;Foreground=White;Underline'
+    $_.properties.Separator = '  '
+    $_.leading_diamond_symbol = ''
   }
 }
-$json | ConvertTo-Json -Depth 10 | Set-Content $dest -Encoding UTF8
-```
-Ahora el tema custom-terminal mostrará la ruta actual subrayada en color DarkCyan cuando exista en disco.
+$j | ConvertTo-Json -Depth 10 | Set-Content "$themeDir\custom-terminal.omp.json"
 
-🚀 Uso y ajustes finales
+Editar tu perfil en pwsh:
 
-Reinicia PowerShell 7 o vuelve a cargar tu perfil:
-```
-. $PROFILE
-```
-Explora otros temas con:
-```
-Get-PoshThemes
-Set-PoshPrompt -Theme <NombreDelTema>
-```
-Personaliza más opciones de PSReadLine (líneas de separador, búsqueda en history, etc.) con Get-Help Set-PSReadLineOption.
+notepad $PROFILE.CurrentUserCurrentHost
 
-🚀 Uso y ajustes finales del script
+Pega solo el bloque:
 
-📝 Resumen de pasos
+Import-Module PSReadLine
+Set-PSReadLineOption -PredictionSource History -PredictionViewStyle InlineView -Colors @{
+String='DarkRed';Comment='DarkGreen';Keyword='Cyan';Command='Green';Parameter='Yellow';
+Operator='White';Variable='Magenta';InlinePrediction='Gray'
+}
+Import-Module posh-git
 
-Instalación de módulos:
+# OMP
 
-PSReadLine (resaltado de sintaxis+autosuggestions)
+$omp = Get-Command oh-my-posh -ErrorAction SilentlyContinue
+& $omp.Source init pwsh --theme powerlevel10k_classic |
+Invoke-Expression
 
-posh-git (información de Git en el prompt)
+Guardar, recargar (. $PROFILE) y salir/entrar en pwsh.
 
-oh-my-posh (diseño de prompt muy configurable)
+🐞 Resolución de problemas
 
-Perfil ($PROFILE):
+"'Khaki' is not a valid color value" o colores inválidos: usa solo los valores ConsoleColor:
+Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGray, Blue, Green, Cyan, Red, Magenta, Yellow, White.
 
-Carga todos los módulos
+Errores con \ o init no reconocido: asegúrate de editar solo $PROFILE.CurrentUserCurrentHost en pwsh, no el de WindowsPowerShell.
 
-Configura colores de tokens y autosuggestions inline
+oh-my-posh** no reconocido**: cierra y abre pwsh después de instalarlo via winget/scoop para actualizar $Env:Path.
 
-Aplica el tema custom-terminal que creamos
+Duplicación de PSReadLine en VSCode: usa esta comprobación para importar:
 
-Tema personalizado:
+if(-not (Get-Module PSReadLine)) { Import-Module PSReadLine }
 
-Copia el tema base paradox.omp.json
+Windows Terminal no carga el esquema: revisa que tu settings.json esté en:
 
-Busca el bloque "type": "path" y le añade Underline;Foreground=DarkCyan
+%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
 
-Guarda como custom-terminal.omp.json en tu carpeta de temas
+o %LOCALAPPDATA%\Microsoft\Windows Terminal\settings.json
 
-Activación:
-
-Tras reiniciar PowerShell 7 (o ejecutar . $PROFILE), tendrás:
-
-Colores de sintaxis y autosuggestions
-
-Prompt multicolor con usuario, ruta, estado Git
-
-Ruta válida subrayada en tu prompt
-
-¡Disfruta de tu nuevo terminal al estilo Arch-Zsh en Windows!
-
-🚀 Uso y ajustes finales
-
-Reinicia PowerShell 7 o vuelve a cargar tu perfil:
-```
-. $PROFILE
-```
-Explora otros temas con:
-```
-Get-PoshThemes
-Set-PoshPrompt -Theme <NombreDelTema>
-```
-Personaliza más opciones de PSReadLine (líneas de separador, búsqueda en history, etc.) con Get-Help Set-PSReadLineOption.
-
-¡Disfruta de tu terminal al nivel de cualquier setup de Arch Linux o Oh-My-Zsh en Windows!
-
-
+¡Y eso es todo! Con estos pasos tendrás un terminal en Windows que rivaliza con cualquier configuración de Arch+Oh-My-Zsh.
