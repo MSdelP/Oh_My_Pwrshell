@@ -13,8 +13,8 @@ Windows Terminal: Instálalo también desde la Microsoft Store para gestionar pe
 Abre PowerShell 7 y ejecuta:
 ```
 Install-Module PSReadLine -Scope CurrentUser -Force      # Sintaxis y autosuggestions
-Install-Module posh-git    -Scope CurrentUser -Force      # Indicadores de Git en el prompt
-Install-Module oh-my-posh   -Scope CurrentUser -Force      # Temas de prompt muy configurables
+Install-Module posh-git -Scope CurrentUser -Force      # Indicadores de Git en el prompt
+Install-Module oh-my-posh -Scope CurrentUser -Force      # Temas de prompt muy configurables
 ```
 🛠️ Configuración del perfil ($PROFILE)
 
