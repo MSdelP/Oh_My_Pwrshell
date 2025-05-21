@@ -78,3 +78,60 @@ Get-PoshThemes
 Set-PoshPrompt -Theme <NombreDelTema>
 ```
 Personaliza más opciones de PSReadLine (líneas de separador, búsqueda en history, etc.) con Get-Help Set-PSReadLineOption.
+
+🚀 Uso y ajustes finales del script
+
+📝 Resumen de pasos
+
+Instalación de módulos:
+
+PSReadLine (resaltado de sintaxis+autosuggestions)
+
+posh-git (información de Git en el prompt)
+
+oh-my-posh (diseño de prompt muy configurable)
+
+Perfil ($PROFILE):
+
+Carga todos los módulos
+
+Configura colores de tokens y autosuggestions inline
+
+Aplica el tema custom-terminal que creamos
+
+Tema personalizado:
+
+Copia el tema base paradox.omp.json
+
+Busca el bloque "type": "path" y le añade Underline;Foreground=DarkCyan
+
+Guarda como custom-terminal.omp.json en tu carpeta de temas
+
+Activación:
+
+Tras reiniciar PowerShell 7 (o ejecutar . $PROFILE), tendrás:
+
+Colores de sintaxis y autosuggestions
+
+Prompt multicolor con usuario, ruta, estado Git
+
+Ruta válida subrayada en tu prompt
+
+¡Disfruta de tu nuevo terminal al estilo Arch-Zsh en Windows!
+
+🚀 Uso y ajustes finales
+
+Reinicia PowerShell 7 o vuelve a cargar tu perfil:
+```
+. $PROFILE
+```
+Explora otros temas con:
+```
+Get-PoshThemes
+Set-PoshPrompt -Theme <NombreDelTema>
+```
+Personaliza más opciones de PSReadLine (líneas de separador, búsqueda en history, etc.) con Get-Help Set-PSReadLineOption.
+
+¡Disfruta de tu terminal al nivel de cualquier setup de Arch Linux o Oh-My-Zsh en Windows!
+
+
